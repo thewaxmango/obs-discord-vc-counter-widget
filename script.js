@@ -1,15 +1,10 @@
-// Function to create a new card
 function createCard() {
-    // Card structure
     const card = document.createElement('div');
     card.classList.add('card');
-    
-    // Create image element
+
     const image = document.createElement('img');
-    image.src = 'https://via.placeholder.com/200x150'; // default placeholder image
-    image.alt = 'Card Image';
-    
-    // Event listener to set image URL on click
+    image.alt = 'click to set image';
+
     image.addEventListener('click', () => {
         const url = prompt('Enter Image URL:');
         if (url) {
@@ -17,55 +12,74 @@ function createCard() {
         }
     });
 
-    // Create counter and buttons
+    const deleteButton = document.createElement('div');
+    deleteButton.classList.add('delete-btn');
+    deleteButton.innerText = '×';
+
     const counter = document.createElement('div');
     counter.classList.add('counter');
-    
+
+    const buttonWrapper = document.createElement('div');
+    buttonWrapper.classList.add('button-wrapper');
+
     const decrementButton = document.createElement('button');
-    decrementButton.innerText = '-';
-    
+    decrementButton.innerText = '−';
+
     const incrementButton = document.createElement('button');
     incrementButton.innerText = '+';
-    
+
+    const countDisplay = document.createElement('span');
+    countDisplay.innerText = '0';
+
     let count = 0;
 
-    // Decrement counter
-    decrementButton.addEventListener('click', () => {
-        count--;
-        updateCounter();
+    deleteButton.addEventListener('click', () => {
+        card.remove();
     });
-
-    // Increment counter
-    incrementButton.addEventListener('click', () => {
-        count++;
-        updateCounter();
-    });
-
-    // Update the counter display
-    function updateCounter() {
-        counter.textContent = `Count: ${count}`;
-        counter.appendChild(decrementButton);
-        counter.appendChild(incrementButton);
+    function updateCount(change) {
+        count += change;
+        countDisplay.innerText = count;
     }
+    decrementButton.addEventListener('click', (event) => {
+        if (event.ctrlKey) {
+            updateCount(-10);
+        } else if (event.shiftKey) {
+            updateCount(-5);
+        } else {
+            updateCount(-1);
+        }
+    });
+    incrementButton.addEventListener('click', (event) => {
+        if (event.ctrlKey) {
+            updateCount(10);
+        } else if (event.shiftKey) {
+            updateCount(5);
+        } else {
+            updateCount(1);
+        }
+    });
 
-    // Initialize counter
-    updateCounter();
-
-    // Append elements to the card
+    counter.appendChild(countDisplay);
+    buttonWrapper.appendChild(incrementButton);
+    buttonWrapper.appendChild(decrementButton);
+    counter.appendChild(buttonWrapper);
     card.appendChild(image);
+    card.appendChild(deleteButton);
     card.appendChild(counter);
 
     return card;
 }
 
-// Add card to container
-document.getElementById('add-card-btn').addEventListener('click', () => {
+function appendCard() {
     const cardContainer = document.getElementById('card-container');
     const newCard = createCard();
     cardContainer.appendChild(newCard);
-});
+}
 
-// Example: Add one card initially when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('add-card-btn').click();
+appendCard()
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === '=') {
+        appendCard();
+    }
 });
